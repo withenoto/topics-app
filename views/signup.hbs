@@ -1,0 +1,16 @@
+
+ <form id="form" action="/signup" method="POST">
+    <label for="email">Email</label><br>
+    <input type="email" name="email"
+      placeholder="anakinSkywalker@starwars.de">
+
+    <label for="password">Password</label><br>
+    <input type="password" name="password"
+      placeholder="DeathStar">
+
+    <button>Create account</button>
+  </form>
+
+  {{#if err}}
+  {{err}}
+  {{/if}}
