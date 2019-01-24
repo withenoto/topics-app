@@ -9,6 +9,7 @@ const mongoose     = require('mongoose');
 const logger       = require('morgan');
 const path         = require('path');
 const jquery       = require("jquery")
+const User         = require("./models/user")
 
 const bcrypt       = require("bcrypt");
 const session      = require("express-session");
@@ -35,12 +36,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// passport middleware
 app.use(session({
-  secret: `${process.env.secret}`,
+  secret: "LP",
   resave: true,
   saveUninitialized: true
 }));
-
 
 passport.serializeUser((user, cb) => {
   cb(null, user._id);
@@ -53,8 +54,8 @@ passport.deserializeUser((id, cb) => {
   });
 });
 
-passport.use(new LocalStrategy((username, password, next) => {
-  User.findOne({ username }, (err, user) => {
+passport.use(new LocalStrategy({usernameField: "email"}, (username, password, next) => {
+  User.findOne({ email:username }, (err, user) => {
     if (err) {
       return next(err);
     }
@@ -70,15 +71,9 @@ passport.use(new LocalStrategy((username, password, next) => {
 }));
 
 
-
-
-
-
-
-
-
 app.use(passport.initialize());
 app.use(passport.session());
+
 // Express View engine setup
 
 app.use(require('node-sass-middleware')({
@@ -94,14 +89,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 
-
 // default value for title local
 app.locals.title = 'Express - Generated with IronGenerator';
 
 
-
 const index = require('./routes/index');
 app.use('/', index);
+
+const auth = require("./routes/auth")
+app.use("/auth", auth)
+
 
 
 module.exports = app;

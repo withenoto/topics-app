@@ -1,11 +1,40 @@
-<button id="topicbutton">add topic</button>
+{{#if topics.user}}
 
+<a href="/auth/logout"><button id="logout">LOG OUT</button></a>
+<button id="topicbutton" class="toggle">add topic</button>
 
 <!-- TOPIC FIELD-->
-<div id="topicfield">
+<div class="topicfield">
   <h1>Add new Topic</h1>
-<form>
-<textarea></textarea>
-</form>
-<button>Cancel</button><button>Submit</button>
+
+  <form action="/submittopic" method="post">
+    <label for="title">Title:</label>
+    <input name="title" id="title">
+    <br>
+    <label for="textarea">your topic:</label>
+    <textarea name="maintext" id="textarea"></textarea>
+    
+    <button class="toggle">Cancel</button><button type="submit" class="toggle">Submit</button>
+
+  </form>
+
 </div>
+
+<div id="alltopics">
+{{#each topics}}
+<div id="topicandvote">
+<div id="votes">
+  <button class="upvote" data-topic-id="{{this.id}}">Upvote</button>
+  <button class="downvote" data-topic-id="{{this.id}}">Downvote</button>
+</div>
+<div id="singletopic">
+<h2>Title: {{this.title}}</h2>
+<p>Text: {{this.maintext}}</p>
+<p>upvotes: {{this.upvote}}</p> 
+<p>downvotes: {{this.downvote}}</p> 
+<p>{{this.created_at}}</p>
+</div>
+</div>
+{{/each}}
+</div>
+{{/if}}

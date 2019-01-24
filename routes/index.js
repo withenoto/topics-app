@@ -1,73 +1,56 @@
 const express   = require('express');
 const router    = express.Router();
 const User      = require("../models/user")
+const Topic    = require("../models/topic")
 const passport  = require("passport")
 const ensureLogin = require("connect-ensure-login");
-const bcrypt  = require("bcrypt")
-
-// Topics
-
-router.get("/topics", (req, res) => {
-  res.render("topics")
-})
 
 
-// LOG IN
+// private topic page
 
-router.get('/', (req, res, next) => {
-  res.render('login');
+router.get("/topics", ensureLogin.ensureLoggedIn("/auth/login"), (req, res) => {
+
+  Topic.find().then(topics => 
+    {
+      topics.user = req.user
+      res.render("topics", {topics})}) 
 });
 
-router.post("/login", passport.authenticate("local", {
-  successRedirect: "/",
-  failureRedirect: "/fail",
-  //failureFlash: true,
-  passReqToCallback: true
-}));
-
-router.get("/fail", (req, res) => {
-  res.send("did not work")
-})
+// add new topic
 
 
-// SIGN UP
+router.post("/submittopic", ensureLogin.ensureLoggedIn("/auth/login"), (req, res) => {
 
-router.get('/signup', (req, res, next) => {
-  res.render('signup');
+  var title = req.body.title
+  var maintext = req.body.maintext
+
+  Topic.create({
+    title: title,
+    maintext: maintext
+  }).then(() => {
+
+res.redirect("/topics")
+  
+
+    })
 });
 
-router.post("/signup", (req, res) => {
 
-  var email = req.body.email
-  var password = req.body.password
-
-  if(email === "" || password === "") {
-    res.render("signup", {err: "all fields required"});
-    return;
-  }
-
-  User.findOne({email: email}).then(user => {
-    if(user !== null) {
-      res.render("signup", {err: "user already exists!"});
-
-      return;
-    }
-
-  const salt     = bcrypt.genSaltSync(10);
-  const hashPass = bcrypt.hashSync(password, salt);
-
-  const newUser  = new User({
-    email: email,
-    password: hashPass
-  });
-
-  newUser.save().then(() => {
-    res.redirect("/")
-  })
-
-}).catch(err => {console.log(err)})
-
+// AXIOS
+router.get("/getid", (req, res) => {
+  
 })
+
+router.post("/:topicid/upvote", (req, res) => {
+  // welches topic - upvote
+console.log(req.params.topicid)
+  // welcher user?
+  var user = "234"
+
+ // Topic.updateOne({id= req.params.topicid}, {upvote.push(user)})
+})
+
+
 
 
 module.exports = router;

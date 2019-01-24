@@ -9,7 +9,7 @@ const topic_schema = mongoose.Schema({
   star: Boolean,
   active: Boolean 
 }, {
-  timestamps: true
+  timestamps: {createdAt: "created_at"}
 })
 
-module.exports = mongoose.model("User", user_schema)
+module.exports = mongoose.model("Topic", topic_schema)
