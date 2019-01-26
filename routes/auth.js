@@ -38,7 +38,7 @@ authrouter.post("/signup", (req, res) => {
   });
 
   newUser.save().then(() => {
-    res.redirect("/auth/signup")
+    res.redirect("/auth/login")
   })
 
 }).catch(err => {console.log(err)})
@@ -53,12 +53,32 @@ authrouter.get('/login', (req, res, next) => {
 });
 
 
+
+
+authrouter.post('/login',function(req,res){
+
+  if(!req.body.email || !req.body.password) {
+
+    res.render('login',{err: "please insert valid data"});
+
+  }
+  else{
+      passport.authenticate('local',{
+          successRedirect:'/topics',
+          failureRedirect: '/auth/login',
+          passReqToCallback: true
+      })(req,res); // <---- ADDD THIS
+  }
+});
+
+
+/*
 authrouter.post("/login", passport.authenticate("local", {
   successRedirect: "/topics",
   failureRedirect: "/auth/login",
   passReqToCallback: true
 }));
-
+*/
 
 // LOG OUT
 

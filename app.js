@@ -40,8 +40,9 @@ app.use(cookieParser());
 app.use(session({
   secret: "LP",
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
 }));
+
 
 passport.serializeUser((user, cb) => {
   cb(null, user._id);
@@ -54,6 +55,7 @@ passport.deserializeUser((id, cb) => {
   });
 });
 
+
 passport.use(new LocalStrategy({usernameField: "email"}, (username, password, next) => {
   User.findOne({ email:username }, (err, user) => {
     if (err) {
@@ -65,7 +67,7 @@ passport.use(new LocalStrategy({usernameField: "email"}, (username, password, ne
     if (!bcrypt.compareSync(password, user.password)) {
       return next(null, false, { message: "Incorrect password" });
     }
-
+    // session.user = username
     return next(null, user);
   });
 }));

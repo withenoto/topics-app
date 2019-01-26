@@ -4,8 +4,8 @@ const mongoose = require("mongoose")
 const topic_schema = mongoose.Schema({
   title: String,
   maintext: String,
-  upvote: [{type: String}],
-  downvote: [{type: String}],
+  upvote: [{type: mongoose.Schema.Types.ObjectId}],
+  downvote: [{type: mongoose.Schema.Types.ObjectId}],
   star: Boolean,
   active: Boolean 
 }, {
